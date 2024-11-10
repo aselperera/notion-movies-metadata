@@ -1,0 +1,29 @@
+{
+	"name": "notion-movies-metadata",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"build": "tsc",
+		"test": "node --loader ts-node/esm src/omdbClient.ts"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/aselperera/notion-movies-metadata.git"
+	},
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/aselperera/notion-movies-metadata/issues"
+	},
+	"homepage": "https://github.com/aselperera/notion-movies-metadata#readme",
+	"dependencies": {
+		"axios": "^1.7.7",
+		"dotenv": "^16.4.5"
+	},
+	"devDependencies": {
+		"@types/node": "^22.9.0",
+		"ts-node": "^10.9.2",
+		"typescript": "^5.6.3"
+	}
+}
