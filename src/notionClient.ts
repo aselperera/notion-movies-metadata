@@ -18,12 +18,30 @@ if (!notionDatabaseId) {
 
 const notion = new Client({ auth: notionApiKey });
 
-const getLatestCreatedPage = async () => {
+export const getLatestPage = async () => {
 	const response = await notion.databases.query({
 		database_id: notionDatabaseId,
+		filter: {
+			property: '_updatedTime',
+			date: {
+				is_empty: true,
+			},
+		},
 		page_size: 1,
 	});
 	console.log(response.results[0]);
 };
 
-getLatestCreatedPage();
+export const getPageByTitle = async (title: string) => {
+	const response = await notion.databases.query({
+		database_id: notionDatabaseId,
+		filter: {
+			property: 'Title',
+			rich_text: {
+				contains: title,
+			},
+		},
+	});
+
+	return response;
+};

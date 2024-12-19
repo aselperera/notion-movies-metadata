@@ -4,8 +4,9 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"build": "tsc",
-		"test": "node --loader ts-node/esm src/omdbClient.ts"
+		"testOmdb": "node --loader ts-node/esm tests/omdbClient.test.ts",
+		"testNotion": "node --loader ts-node/esm tests/notionClient.test.ts",
+		"build": "tsc"
 	},
 	"repository": {
 		"type": "git",
