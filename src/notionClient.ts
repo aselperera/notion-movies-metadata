@@ -1,5 +1,9 @@
 import dotenv from 'dotenv';
 import { Client } from '@notionhq/client';
+import moment from 'moment';
+import { metadata, page, TitleResponse, YearResponse } from './types';
+import { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints';
+import { directors } from './constants';
 
 dotenv.config();
 
@@ -18,27 +22,90 @@ if (!notionDatabaseId) {
 
 const notion = new Client({ auth: notionApiKey });
 
-export const getLatestPage = async () => {
-	const response = await notion.databases.query({
+// GET
+export const getDatabase = async () => {
+	const response = await notion.databases.retrieve({
 		database_id: notionDatabaseId,
-		filter: {
-			property: '_updatedTime',
-			date: {
-				is_empty: true,
-			},
-		},
-		page_size: 1,
 	});
-	console.log(response.results[0]);
+
+	return response;
 };
 
-export const getPageByTitle = async (title: string) => {
+export const getPageByTitle = async (title: string): Promise<page> => {
 	const response = await notion.databases.query({
 		database_id: notionDatabaseId,
 		filter: {
 			property: 'Title',
 			rich_text: {
-				contains: title,
+				equals: title,
+			},
+		},
+	});
+
+	const pageResponse = response.results[0] as PageObjectResponse;
+	const titleResponse = pageResponse.properties.Title as TitleResponse;
+	const yearResponse = pageResponse.properties.Year as YearResponse;
+
+	const page = {
+		title: titleResponse.title[0].plain_text,
+		year: yearResponse.number,
+		id: pageResponse.id,
+	};
+
+	return page;
+};
+
+// UPDATE
+export const updatePage = async (pageId: string, metadata: metadata) => {
+	const response = notion.pages.update({
+		page_id: pageId,
+		icon: {
+			type: 'external',
+			external: {
+				url: metadata.posterUrl,
+			},
+		},
+		properties: {
+			'Release Date': {
+				date: {
+					start: metadata.released,
+				},
+			},
+			Genres: {
+				multi_select: metadata.genres.map((x) => ({ name: x })),
+			},
+			...(directors.includes(metadata.director) && {
+				Director: {
+					select: {
+						name: metadata.director,
+					},
+				},
+			}),
+			Actors: {
+				rich_text: [
+					{
+						text: {
+							content: metadata.actors,
+						},
+					},
+				],
+			},
+			Plot: {
+				rich_text: [
+					{
+						text: {
+							content: metadata.plot,
+						},
+					},
+				],
+			},
+			Rating: {
+				number: metadata.rating,
+			},
+			apiUpdateTime: {
+				date: {
+					start: moment().toISOString(),
+				},
 			},
 		},
 	});
