@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import axios from 'axios';
-import { metadata } from './types';
+import { metadata } from '../../types';
 import moment from 'moment';
 
 dotenv.config();

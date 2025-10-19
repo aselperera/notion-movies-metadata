@@ -1,0 +1,15 @@
+export const NOTABLE_DIRECTORS = [
+	'Christopher Nolan',
+	'Denis Villeneuve',
+	'Edgar Wright',
+	'George Lucas',
+	'Guy Ritchie',
+	'James Cameron',
+	'Martin Scorsese',
+	'Peter Jackson',
+	'Quentin Tarantino',
+	'Ridley Scott',
+	'Sam Mendes',
+	'Steven Spielberg',
+	'Wes Anderson',
+];

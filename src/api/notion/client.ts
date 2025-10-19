@@ -1,9 +1,10 @@
-import dotenv from 'dotenv';
 import { Client } from '@notionhq/client';
-import moment from 'moment';
-import { metadata, page, TitleResponse, YearResponse } from './types';
 import { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints';
-import { directors } from './constants';
+import moment from 'moment';
+import dotenv from 'dotenv';
+
+import { metadata, page, TitleResponse, YearResponse } from '../../types';
+import { NOTABLE_DIRECTORS } from '../../config/constants';
 
 dotenv.config();
 
@@ -21,15 +22,6 @@ if (!notionDatabaseId) {
 }
 
 const notion = new Client({ auth: notionApiKey });
-
-// GET
-export const getDatabase = async () => {
-	const response = await notion.databases.retrieve({
-		database_id: notionDatabaseId,
-	});
-
-	return response;
-};
 
 export const getPageByTitle = async (title: string): Promise<page> => {
 	const response = await notion.databases.query({
@@ -74,7 +66,7 @@ export const updatePage = async (pageId: string, metadata: metadata) => {
 			Genres: {
 				multi_select: metadata.genres.map((x) => ({ name: x })),
 			},
-			...(directors.includes(metadata.director) && {
+			...(NOTABLE_DIRECTORS.includes(metadata.director) && {
 				Director: {
 					select: {
 						name: metadata.director,

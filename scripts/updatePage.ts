@@ -1,5 +1,5 @@
-import { getPageByTitle, updatePage } from '../src/notionClient';
-import { getMetadata } from '../src/omdbClient';
+import { getPageByTitle, updatePage } from '../src/api/notion/client';
+import { getMetadata } from '../src/api/omdb/client';
 
 export const updatePageWithMetadata = async (title: string) => {
 	const page = await getPageByTitle(title);
