@@ -1,47 +1,51 @@
-import { Client } from '@notionhq/client';
-import { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints';
+import { Client, PageObjectResponse } from '@notionhq/client';
 import moment from 'moment';
 import dotenv from 'dotenv';
 
-import { metadata, page, TitleResponse, YearResponse } from '../../types';
 import { NOTABLE_DIRECTORS } from '../../config/constants';
+import { Movie, MoviePageObjectResponse } from './types';
 
 dotenv.config();
 
-const notionApiKey = process.env.NOTION_API_KEY;
-const notionDatabaseId = process.env.NOTION_DATABASE_ID;
+const NOTION_API_KEY = process.env.NOTION_API_KEY;
+const NOTION_DB_ID = process.env.NOTION_DATABASE_ID;
 
-if (!notionApiKey) {
+if (!NOTION_API_KEY) {
 	throw new Error('NOTION_API_KEY is not defined in the environment variables');
 }
 
-if (!notionDatabaseId) {
+if (!NOTION_DB_ID) {
 	throw new Error(
 		'NOTION_DATABASE_ID is not defined in the environment variables'
 	);
 }
 
-const notion = new Client({ auth: notionApiKey });
+const notion = new Client({ auth: NOTION_API_KEY });
 
-export const getPageByTitle = async (title: string): Promise<page> => {
-	const response = await notion.databases.query({
-		database_id: notionDatabaseId,
+export const getPageByTitle = async (title: string): Promise<Movie | null> => {
+	const response = await notion.search({
+		query: title,
 		filter: {
-			property: 'Title',
-			rich_text: {
-				equals: title,
-			},
+			property: 'object',
+			value: 'page',
 		},
 	});
 
-	const pageResponse = response.results[0] as PageObjectResponse;
-	const titleResponse = pageResponse.properties.Title as TitleResponse;
-	const yearResponse = pageResponse.properties.Year as YearResponse;
+	if (response.results.length === 0) {
+		console.warn(`No page found with title: ${title}`);
+		return null;
+	}
 
-	const page = {
-		title: titleResponse.title[0].plain_text,
-		year: yearResponse.number,
-		id: pageResponse.id,
+	const result = response.results[0] as MoviePageObjectResponse;
+	// console.log(result);
+
+	const page: Movie = {
+		title: result.properties.Title.title[0].plain_text,
+		year: result.properties.Year.number,
+		released: result.properties.Released.date?.start,
+
+		// ID at bottom
+		id: result.id,
 	};
 
 	return page;
