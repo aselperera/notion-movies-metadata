@@ -1,0 +1,42 @@
+import { env } from '../config/env';
+import { metadata } from '../types';
+import moment from 'moment';
+
+export const getMovieByTitle = async (
+	title: string,
+	year?: number
+): Promise<metadata> => {
+	const url = new URL(env.OMDB_BASE_URL);
+
+	url.searchParams.set('apikey', env.OMDB_API_KEY);
+	url.searchParams.set('t', title);
+	if (year) url.searchParams.set('y', year.toString());
+
+	const res = await fetch(url.toString());
+
+	if (!res.ok) {
+		throw new Error(`HTTP ${res.status}`);
+	}
+
+	const data = await res.json();
+
+	if (data.Response === 'False') {
+		throw new Error(data.Error);
+	}
+
+	return data;
+
+	const metadata: metadata = {
+		title: data.Title,
+		year: Number(data.Year),
+		released: moment(data.Released, 'DD MMM YYYY').format('YYYY-MM-DD'),
+		genres: data.Genre.split(', '),
+		director: data.Director.split(', ')[0],
+		actors: data.Actors,
+		plot: data.Plot,
+		rating: Number(data.imdbRating),
+		posterUrl: data.Poster,
+	};
+
+	return metadata;
+};
