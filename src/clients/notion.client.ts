@@ -8,6 +8,8 @@ import { env } from '../config/env';
 
 const notion = new Client({ auth: env.NOTION_API_KEY });
 
+const FILTER_PROPERTIES = ['Title', 'Year']; // These are the only properties that are returned
+
 export async function getDatabase(): Promise<GetDatabaseResponse> {
 	const res = await notion.databases.retrieve({
 		database_id: env.NOTION_DATABASE_ID,
@@ -20,7 +22,7 @@ async function queryPageEqualsTitle(
 ): Promise<QueryDataSourceResponse> {
 	const res = await notion.dataSources.query({
 		data_source_id: env.NOTION_DATASOURCE_ID,
-		filter_properties: ['Title'],
+		filter_properties: FILTER_PROPERTIES,
 		filter: {
 			property: 'Title',
 			title: {
@@ -38,7 +40,7 @@ async function queryPageContainsTitle(
 ): Promise<QueryDataSourceResponse> {
 	const res = await notion.dataSources.query({
 		data_source_id: env.NOTION_DATASOURCE_ID,
-		filter_properties: ['Title'],
+		filter_properties: FILTER_PROPERTIES,
 		filter: {
 			property: 'Title',
 			title: {
