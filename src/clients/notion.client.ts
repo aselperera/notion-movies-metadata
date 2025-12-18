@@ -3,11 +3,8 @@ import {
 	GetDatabaseResponse,
 	QueryDataSourceResponse,
 } from '@notionhq/client';
-import moment from 'moment';
 
 import { env } from '../config/env';
-import { NOTABLE_DIRECTORS } from '../config/constants';
-import { Movie, MoviePageObjectResponse } from '../api/notion/types';
 
 const notion = new Client({ auth: env.NOTION_API_KEY });
 
@@ -64,88 +61,39 @@ export async function getPageByTitle(title: string) {
 	return res.results.length !== 0 ? res.results[0] : null;
 }
 
-export const getPage = async (title: string) => {
-	const response = await notion.search({
-		query: title,
-		filter: {
-			value: 'page',
-			property: 'object',
-		},
-	});
-
-	if (response.results.length === 0) {
-		console.warn(`No page found with title: ${title}`);
-		return null;
-	}
-
-	const result = response.results[0] as MoviePageObjectResponse;
-
-	const page: Movie = {
-		title: result.properties.Title.title[0].plain_text,
-		year: result.properties.Year.number,
-		released: '6969',
-
-		// ID at bottom
-		id: result.id,
-	};
-
-	return page;
-};
-
-// UPDATE
-// export const updatePage = async (pageId: string, metadata: metadata) => {
-// 	const response = notion.pages.update({
-// 		page_id: pageId,
-// 		icon: {
-// 			type: 'external',
-// 			external: {
-// 				url: metadata.posterUrl,
-// 			},
-// 		},
-// 		properties: {
-// 			'Release Date': {
-// 				date: {
-// 					start: metadata.released,
-// 				},
-// 			},
-// 			Genres: {
-// 				multi_select: metadata.genres.map((x) => ({ name: x })),
-// 			},
-// 			...(NOTABLE_DIRECTORS.includes(metadata.director) && {
-// 				Director: {
-// 					select: {
-// 						name: metadata.director,
-// 					},
-// 				},
-// 			}),
-// 			Actors: {
-// 				rich_text: [
-// 					{
-// 						text: {
-// 							content: metadata.actors,
-// 						},
-// 					},
-// 				],
-// 			},
-// 			Plot: {
-// 				rich_text: [
-// 					{
-// 						text: {
-// 							content: metadata.plot,
-// 						},
-// 					},
-// 				],
-// 			},
-// 			Rating: {
-// 				number: metadata.rating,
-// 			},
-// 			apiUpdateTime: {
-// 				date: {
-// 					start: moment().toISOString(),
-// 				},
-// 			},
+// export const getPage = async (title: string) => {
+// 	const response = await notion.search({
+// 		query: title,
+// 		filter: {
+// 			value: 'page',
+// 			property: 'object',
 // 		},
 // 	});
 
-// 	return response;
+// 	if (response.results.length === 0) {
+// 		console.warn(`No page found with title: ${title}`);
+// 		return null;
+// 	}
+
+// 	const result = response.results[0] as MoviePageObjectResponse;
+
+// 	const page: Movie = {
+// 		title: result.properties.Title.title[0].plain_text,
+// 		year: result.properties.Year.number,
+// 		released: '6969',
+
+// 		// ID at bottom
+// 		id: result.id,
+// 	};
+
+// 	return page;
 // };
+
+export async function updatePage(pageId: string, params: any) {
+	const res = notion.pages.update({
+		page_id: pageId,
+		...params,
+	});
+
+	return res;
+}

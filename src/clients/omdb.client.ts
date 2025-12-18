@@ -1,11 +1,10 @@
 import { env } from '../config/env';
-import { metadata } from '../types';
-import moment from 'moment';
+import { Metadata, OmdbError } from '../types/omdb';
 
 export const getMovieByTitle = async (
 	title: string,
 	year?: number
-): Promise<metadata> => {
+): Promise<Metadata> => {
 	const url = new URL(env.OMDB_BASE_URL);
 
 	url.searchParams.set('apikey', env.OMDB_API_KEY);
@@ -18,7 +17,7 @@ export const getMovieByTitle = async (
 		throw new Error(`HTTP ${res.status}`);
 	}
 
-	const data = await res.json();
+	const data: Metadata | OmdbError = await res.json();
 
 	if (data.Response === 'False') {
 		throw new Error(data.Error);
@@ -26,17 +25,15 @@ export const getMovieByTitle = async (
 
 	return data;
 
-	const metadata: metadata = {
-		title: data.Title,
-		year: Number(data.Year),
-		released: moment(data.Released, 'DD MMM YYYY').format('YYYY-MM-DD'),
-		genres: data.Genre.split(', '),
-		director: data.Director.split(', ')[0],
-		actors: data.Actors,
-		plot: data.Plot,
-		rating: Number(data.imdbRating),
-		posterUrl: data.Poster,
-	};
-
-	return metadata;
+	// const metadata = {
+	// 	title: data.Title,
+	// 	year: Number(data.Year),
+	// 	released: moment(data.Released, 'DD MMM YYYY').format('YYYY-MM-DD'),
+	// 	genres: data.Genre.split(', '),
+	// 	director: data.Director.split(', ')[0],
+	// 	actors: data.Actors,
+	// 	plot: data.Plot,
+	// 	rating: Number(data.imdbRating),
+	// 	posterUrl: data.Poster,
+	// };
 };
