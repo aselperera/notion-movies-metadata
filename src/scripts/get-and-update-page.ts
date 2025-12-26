@@ -2,6 +2,7 @@ import { getPageByTitle, updatePage } from '../clients/notion.client';
 import { getMovieByTitle } from '../clients/omdb.client';
 import { notionToOmdbLookup } from '../mappers/notionToOmdb';
 import { omdbToNotionUpdatePayload } from '../mappers/omdbToNotion';
+import { externalToNotionApostrophe } from '../utils/apostrophes';
 
 async function main() {
 	const [, , title] = process.argv;
@@ -11,9 +12,10 @@ async function main() {
 		process.exit(1);
 	}
 
-	const page = await getPageByTitle(title);
+	const titleForNotion = externalToNotionApostrophe(title);
+	const page = await getPageByTitle(titleForNotion);
 	if (!page) {
-		console.error(`No page found with title: ${title}`);
+		console.error(`No page found with title: ${titleForNotion}`);
 		process.exit(1);
 	}
 

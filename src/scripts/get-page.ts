@@ -1,4 +1,5 @@
 import { getPageByTitle } from '../clients/notion.client';
+import { externalToNotionApostrophe } from '../utils/apostrophes';
 
 async function main() {
 	const [, , title] = process.argv;
@@ -8,7 +9,8 @@ async function main() {
 		process.exit(1);
 	}
 
-	const page = await getPageByTitle(title);
+	const titleForNotion = externalToNotionApostrophe(title);
+	const page = await getPageByTitle(titleForNotion);
 	console.log(page);
 }
 
