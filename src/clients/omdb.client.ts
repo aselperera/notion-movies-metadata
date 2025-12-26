@@ -24,16 +24,4 @@ export const getMovieByTitle = async (
 	}
 
 	return data;
-
-	// const metadata = {
-	// 	title: data.Title,
-	// 	year: Number(data.Year),
-	// 	released: moment(data.Released, 'DD MMM YYYY').format('YYYY-MM-DD'),
-	// 	genres: data.Genre.split(', '),
-	// 	director: data.Director.split(', ')[0],
-	// 	actors: data.Actors,
-	// 	plot: data.Plot,
-	// 	rating: Number(data.imdbRating),
-	// 	posterUrl: data.Poster,
-	// };
 };
