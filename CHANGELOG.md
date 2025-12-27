@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.2.0
+
+- Update title on metadata fetch
+
 ## 2.1.0
 
 - Added Vercel API layer
