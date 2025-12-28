@@ -16,9 +16,6 @@ export function omdbToNotionUpdatePayload(omdb: Metadata) {
 			[PROPS.ACTORS]: richTextProp(omdb.Actors),
 			[PROPS.PLOT]: richTextProp(omdb.Plot),
 			[PROPS.RATING]: numberProp(parseFloat(omdb.imdbRating)),
-			...(NOTABLE_DIRECTORS.includes(omdb.Director) && {
-				[PROPS.DIRECTOR_NOTABLE]: selectProp(omdb.Director),
-			}),
 			[PROPS.API_UPDATE_TIME]: dateProp(new Date(), true),
 		},
 	};

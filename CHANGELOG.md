@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.2.1
+
+- Remove notable director field
+
 ## 2.2.0
 
 - Update title on metadata fetch
